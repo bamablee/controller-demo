@@ -3,6 +3,11 @@
 # bootstrap a local boost installation
 #
 
+# make sure to run in our venv
+if [ -z ${VIRTUAL_ENV} ]; then
+    source env/bin/activate
+fi
+
 # download boost
 BOOST_VERSION=1_69_0
 BOOST_DIRNAME=boost_${BOOST_VERSION}
