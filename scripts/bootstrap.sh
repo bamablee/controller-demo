@@ -1,5 +1,7 @@
 #!/bin/bash -x
 #
+# Copyright (c) 2018 Bryson Lee. All rights reserved.
+#
 # bootstrap the environment
 #
 
@@ -18,8 +20,8 @@ DSTDIR=$(echo ${SRCDIR%"m"} | xargs basename)
 ln -s ${SRCDIR} ${DSTDIR}
 popd
 
-# local boost install
-./scripts/bootstrap_boost.sh
+# install a local copy of Boost::Python
+./scripts/install_boost_python.sh
 
 # now install the package into the virtualenv
 ./scripts/setup.sh

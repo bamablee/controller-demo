@@ -1,11 +1,12 @@
 //
-//
+// Copyright (c) 2018 Bryson Lee. All rights reserved.
 //
 
 #include <cmath>
 #include <stdexcept>
 
 #include "fan.hh"
+#include "registers.hh"
 
 Fan::Fan()
 {
@@ -46,6 +47,7 @@ PWM_Fan::~PWM_Fan()
 void PWM_Fan::do_set_speed( double pctspeed )
 {
   pwm_ = std::lround( (double) pwm_max_ * pctspeed / 100.0 );
+  Registers::instance().set( pwm_addr_, pwm_ );
 }
 
 double PWM_Fan::do_get_speed()

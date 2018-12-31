@@ -1,5 +1,7 @@
 #!/bin/bash -x
 #
+# Copyright (c) 2018 Bryson Lee. All rights reserved.
+#
 # wrapper script to invoke pytest
 #
 

@@ -1,7 +1,7 @@
 #!/bin/env python
 #
-#
-#
+# Copyright (c) 2018 Bryson Lee. All rights reserved.
+# 
 
 import setuptools
 import os
@@ -19,6 +19,7 @@ rtl_dirs=[os.path.join( os.path.dirname( os.path.realpath(__file__) ), 'env', 'l
 ext_files = [
     'src/extensions/tempcontrol_ext.cc',
     'src/extensions/fan.cc',
+    'src/extensions/registers.cc',
 ]
 
 ext = setuptools.extension.Extension(

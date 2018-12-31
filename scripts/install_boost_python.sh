@@ -1,6 +1,8 @@
 #!/bin/bash -x
 #
-# bootstrap a local boost installation
+# Copyright (c) 2018 Bryson Lee. All rights reserved.
+#
+# install a local copy of Boost::Python
 #
 
 # make sure to run in our venv
