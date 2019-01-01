@@ -8,7 +8,7 @@
 # set up the virtual env
 python3.6 -m venv --prompt tempcontrol --clear env
 source env/bin/activate
-pip install --upgrade pip
+pip install --upgrade pip setuptools
 pip install -r requirements.txt
 
 # link the python-dev include directory in the venv

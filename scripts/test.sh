@@ -10,5 +10,8 @@ if [ -z ${VIRTUAL_ENV} ]; then
     source env/bin/activate
 fi
 
+# make sure the latest code is installed
+./scripts/setup.sh >/dev/null
+
 # now run all the tests and generate an XUnit result file
 pytest -v --junit-xml=pytest.xml tests/

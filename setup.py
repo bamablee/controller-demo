@@ -19,6 +19,7 @@ rtl_dirs=[os.path.join( os.path.dirname( os.path.realpath(__file__) ), 'env', 'l
 ext_files = [
     'src/extensions/tempcontrol_ext.cc',
     'src/extensions/fan.cc',
+    'src/extensions/actuator.cc',
     'src/extensions/registers.cc',
 ]
 
@@ -34,10 +35,12 @@ ext = setuptools.extension.Extension(
 )
 
 # the main package
+pkg_name = 'tempcontrol'
+
 with open('README.md', 'r') as fh:
     longdesc = fh.read()
     
-setuptools.setup( name="tempcontrol",
+setuptools.setup( name=pkg_name,
                   version='0.0.1',
                   author='Bryson Lee',
                   author_email='r.bryson.lee@gmail.com',
@@ -52,6 +55,9 @@ setuptools.setup( name="tempcontrol",
                       'License :: OSI Approved :: MIT License',
                       'Operating System :: Linux',
                   ],
+                  zip_safe=False,
                   )
 
-
+# update requirements.txt in case we've added anything
+# to the virtual environment
+os.system( 'pip freeze | grep -v %s > requirements.txt' % pkg_name )
