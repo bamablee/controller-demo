@@ -1,7 +1,7 @@
 #
 # Copyright (c) 2018 Bryson Lee. All rights reserved.
 #
-"""A Python module providing sensors, actuators, and
+"""A Python package providing sensors, actuators, and
 controllers for a notional temperature-regulation system.
 """
 
@@ -11,13 +11,30 @@ logger = logging.getLogger( __name__ )
 # package-level dictionary of class names to classes
 registry = {}
 
-# import modules
+# define the root of an abstract mixin class hierarchy
+# to control the interfaces to sensors, actuators, and controllers
+from abc import ABC, abstractmethod
+
+class named_base(ABC):
+    """every object in the system has to have a name
+    """
+    def __init__( self, name=None, **kwargs ):
+        if not name:
+            raise runtime_error( 'instance name unspecified' )
+        self.__name = name
+
+    @property
+    @abstractmethod
+    def name( self ):
+        return self.__name
+
+
+# bring modules into the package namespace
 from . import sensors
 from . import actuators
 from . import controllers
 
-# implement a factory for instantiating/configuring
-# elements of the system
+# implement a factory for instantiating/configuring elements of the system
 def factory( name=None, classname=None, **kwargs ):
     """Factory function for module objects
 
@@ -49,18 +66,4 @@ def factory( name=None, classname=None, **kwargs ):
         raise
     return inst
 
-# provide "python -m tempcontrol ..." invocation syntax
-if __name__ == '__main__':
-    import argparse
-    import configparser
 
-    # command-line parameters
-    parser = argparse.ArgumentParser( prog='python -m tempcontrol',
-                                      description='notional temperature-control system' )
-    parser.add_argument( '-c', '--cfg', help='configuration file name' )
-    parser.add_argument( '-s', '--sec', help='run time in seconds' )
-    args = parser.parse_args()
-
-    # read the configuration file
-    cfg = configparser.ConfigParser()
-    cfg.read( args.cfg )

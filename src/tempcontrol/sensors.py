@@ -14,15 +14,18 @@ class mock_sensor:
     def __init__( self, name, min_val, max_val, nsteps, shape ):
 
         self.__name = name
+        v0 = float(min_val)
+        v1 = float(max_val)
+        ns = int(nsteps)
 
         # create the list of values
         self.__values = None
         if shape == 'ramp':
-            sf = (max_val - min_val)/nsteps
-            self.__values = tuple(x*sf+min_val for x in range(nsteps+1))
+            sf = (v1 - v0)/ns
+            self.__values = tuple(x*sf+v0 for x in range(ns+1))
         elif shape == 'sine':
-            sf = (max_val - min_val) / 2
-            self.__values = tuple(math.sin(x*2*math.pi/nsteps)*sf+min_val+sf for x in range(nsteps+1))
+            sf = (v1 - v0) / 2
+            self.__values = tuple(math.sin(x*2*math.pi/ns)*sf+v0+sf for x in range(ns+1))
 
         # create an iterator over the value list
         if self.__values:
