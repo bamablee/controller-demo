@@ -33,6 +33,7 @@ class named_base(ABC):
 from . import sensors
 from . import actuators
 from . import controllers
+from . import archivers
 
 # implement a factory for instantiating/configuring elements of the system
 def factory( name=None, classname=None, **kwargs ):

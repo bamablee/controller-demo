@@ -18,7 +18,7 @@ BOOST_PYTHON_MODULE(_tempcontrol_ext)
   // expose the NVI-pattern Actuator abstract base class
   bp::class_<Actuator, boost::noncopyable >("actuator", bp::no_init)
     .def("write", &Actuator::write)
-    .add_property("read", &Actuator::read)
+    .def("read", &Actuator::read)
     .add_property("name", &Actuator::name)
     ;
 

@@ -135,17 +135,15 @@ class bounded_linear_controller( controller_base ):
         # now cycle the controller
         while self.loop( cycles ):
             # acquire the sensor inputs
-            inputs = (x.read() for x in self.sensors)
+            inputs = [x.read() for x in self.sensors]
 
             # execute the control law
             self.__state[0] = self.__input_sel( inputs )
             self.__state[1] = self.control_law( self.__state[0] )
 
-            print( '%d: %f, %f' % ( self.cycle, self.__state[0], self.__state[1] ) )
-
             # drive the actuators and read back the results
             for a in self.actuators: a.write( self.__state[1] )
-            outputs = (x.read() for x in self.actuators)
+            outputs = [x.read() for x in self.actuators]
 
             # save the current state
             if self.archiver:

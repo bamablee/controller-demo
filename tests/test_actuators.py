@@ -31,20 +31,20 @@ def test_name(pwm_fan):
     assert pwm_fan.name == 'fan1'
 
 def test_initial_speed(pwm_fan):
-    assert pwm_fan.read == 0.0
+    assert pwm_fan.read() == 0.0
 
 def test_set_speed(pwm_fan):
     pwm_fan.write( 25.0 )
-    assert pytest.approx( pwm_fan.read, 0.01 ) == 250.0
+    assert pytest.approx( pwm_fan.read(), 0.01 ) == 250.0
 
     pwm_fan.write( 50.0 )
-    assert pytest.approx( pwm_fan.read, 0.01 ) == 500.0
+    assert pytest.approx( pwm_fan.read(), 0.01 ) == 500.0
 
     pwm_fan.write( 75.0 )
-    assert pytest.approx( pwm_fan.read, 0.01 ) == 750.0
+    assert pytest.approx( pwm_fan.read(), 0.01 ) == 750.0
 
     pwm_fan.write( 100.0 )
-    assert pytest.approx( pwm_fan.read, 0.01 ) == 1000.0
+    assert pytest.approx( pwm_fan.read(), 0.01 ) == 1000.0
 
 def test_set_speed_exception(pwm_fan):
     with pytest.raises(Exception) as e_info:
