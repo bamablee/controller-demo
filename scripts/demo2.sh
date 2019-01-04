@@ -11,8 +11,8 @@ if [ -z ${VIRTUAL_ENV} ]; then
 fi
 
 # run the demo
-python -m tempcontrol -c cfg/demo1.ini -n 200 -o demo1.csv
+python -m tempcontrol -c cfg/demo2.ini -n 2000 -o demo2.csv
 
 # plot the results
-python scripts/plot.py demo1.csv
+python scripts/plot.py demo2.csv
 
