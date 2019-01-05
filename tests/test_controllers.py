@@ -8,7 +8,7 @@ import time
 @pytest.fixture
 def blc():
     cfg = {
-        'classname':'bounded_linear_controller',
+        'classname':'BoundedLinearController',
         'name':'ctrl1',
         'input_sel':'max',
         'in_lo':'25.0',

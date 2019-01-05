@@ -4,28 +4,24 @@
 """Interfaces to sensors
 """
 
+# pylint: disable=bad-whitespace,invalid-name
+
 from abc import abstractmethod
 import itertools
 import numpy as np
 
-from . import named_base
+from . import NamedBase, _register # pylint: disable=cyclic-import
 
-class sensor_base(named_base):
+class SensorBase(NamedBase):
     """a named object with a read() method
     """
-    def __init__( self, name=None, **kwargs ):
-        super().__init__( name )
-
-    @property
-    def name( self ):
-        return super().name
-
     @abstractmethod
     def read( self ):
-        pass
+        """Retrieve a measurement.
+        """
 
-class mock_sensor(sensor_base):
-    """an object that returns a configurable 
+class MockSensor(SensorBase):
+    """an object that returns a configurable
     series of repeating values.
     """
     def __init__( self, name, min_val, max_val, nsteps, shape ):
@@ -60,5 +56,4 @@ class mock_sensor(sensor_base):
         return self.__values
 
 # install all defined types in the package registry
-from . import registry
-registry['mock_sensor'] = mock_sensor
+_register( 'MockSensor', MockSensor )

@@ -4,14 +4,20 @@
 """Controller implementations
 """
 
+# pylint: disable=bad-whitespace,invalid-name
+
 from abc import abstractmethod
 import time
 import numpy as np
 
-from . import named_base
+from . import NamedBase, _register # pylint: disable=cyclic-import
 
-class controller_base(named_base):
-    def __init__( self, name=None, cycle_secs=0.0, **kwargs ):
+class ControllerBase(NamedBase):
+    """Abstract base class defining the interface to Controllers
+
+    Also provides loop-control function
+    """
+    def __init__( self, name=None, cycle_secs=0.0 ):
         super().__init__( name )
         self.__cycle_secs = float(cycle_secs)
         self.__sensors = []
@@ -21,20 +27,24 @@ class controller_base(named_base):
         self.__cycle = 0
 
     @abstractmethod
-    def configure( self, sensors, actuators, archiver=None, **kwargs ):
+    def configure( self, sensors, actuators, archiver=None ):
+        """Provide the objects the controller will use.
+        """
         self.__sensors = sensors
         self.__actuators = actuators
         self.__archiver = archiver
         self.__configured = True
-        pass
 
     @abstractmethod
     def control_law( self, inputs ):
-        pass
+        """Calculates actuator outputs from processed sensor inputs.
+        """
 
     @abstractmethod
     def run( self, cycles=-1 ):
-        pass
+        """Execute the controller for a specified number of cycles,
+        or continuously.
+        """
 
     def loop( self, cycles=-1 ):
         """Loop control method
@@ -51,7 +61,8 @@ class controller_base(named_base):
 
         """
         # bail if we've reached the cycle limit
-        if self.__cycle >= cycles: return False
+        if self.__cycle >= cycles:
+            return False
 
         # wait until the cycle time has elapsed, then increment the counter
         time.sleep( self.__cycle_secs )
@@ -61,31 +72,32 @@ class controller_base(named_base):
         return True
 
     @property
-    def name( self ):
-        return super().name
-
-    @property
     def sensors( self ):
+        """tuple: sensors configured for this controller"""
         return self.__sensors
 
     @property
     def actuators( self ):
+        """tuple: actuators configured for this controller"""
         return self.__actuators
 
     @property
     def archiver( self ):
+        """Archiver: archiver instances configured for this controller"""
         return self.__archiver
 
     @property
     def configured( self ):
+        """boolean: configuration flag"""
         return self.__configured
 
     @property
     def cycle( self ):
+        """int: current cycle count"""
         return self.__cycle
 
 
-class bounded_linear_controller( controller_base ):
+class BoundedLinearController( ControllerBase ):
     """Bounded linear proportional controller
 
     This controller interpolates feedforward control between
@@ -93,7 +105,7 @@ class bounded_linear_controller( controller_base ):
     the input signal is outside those bounds.
     """
     def __init__( self, name=None, cycle_secs=0.0, input_sel=None,
-                  in_lo=None, in_hi=None, out_lo=None, out_hi=None, **kwargs ):
+                  in_lo=None, in_hi=None, out_lo=None, out_hi=None ):
         super().__init__( name, cycle_secs )
         if input_sel == 'max':
             self.__input_sel = max
@@ -121,12 +133,12 @@ class bounded_linear_controller( controller_base ):
         """
         return np.interp( inputs, self.__x, self.__y )
 
-    def run( self, cycles ):
+    def run( self, cycles=-1 ):
         # write the initial state of the system to the archive
         if self.archiver:
             sens_ic = (x.read() for x in self.sensors)
             act_ic = (x.read() for x in self.actuators)
-            self.archiver.write( abscissa = self.cycle,
+            self.archiver.write( abscissa_val = self.cycle,
                                  sensor_vals = sens_ic,
                                  actuator_vals = act_ic,
                                  controller_vals = self.__state
@@ -142,18 +154,17 @@ class bounded_linear_controller( controller_base ):
             self.__state[1] = self.control_law( self.__state[0] )
 
             # drive the actuators and read back the results
-            for a in self.actuators: a.write( self.__state[1] )
+            for a in self.actuators:
+                a.write( self.__state[1] )
             outputs = [x.read() for x in self.actuators]
 
             # save the current state
             if self.archiver:
-                self.archiver.write( abscissa = self.cycle,
+                self.archiver.write( abscissa_val = self.cycle,
                                      sensor_vals = inputs,
                                      actuator_vals = outputs,
                                      controller_vals = self.__state
                                      )
 
 # install all configurable  types in the package registry
-from . import registry
-registry['bounded_linear_controller'] = bounded_linear_controller
-
+_register( 'BoundedLinearController', BoundedLinearController )

@@ -13,7 +13,7 @@ def direct_pwm_fan():
 
 def factory_pwm_fan():
     cfg = {
-        'classname':'pwm_fan',
+        'classname':'PwmFan',
         'name':'fan1',
         'pwm_max':'0x0000FFFF',
         'pwm_addr':'0xD0000001',

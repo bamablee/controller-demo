@@ -7,7 +7,7 @@ import pytest
 @pytest.fixture
 def ramp():
     cfg = {
-        'classname': 'mock_sensor',
+        'classname': 'MockSensor',
         'name': 'ramp',
         'min_val': '0.0',
         'max_val': '100.0',

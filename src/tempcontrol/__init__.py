@@ -5,35 +5,12 @@
 controllers for a notional temperature-regulation system.
 """
 
-import logging
-logger = logging.getLogger( __name__ )
+# pylint: disable=bad-whitespace,invalid-name
 
 # package-level dictionary of class names to classes
-registry = {}
-
-# define the root of an abstract mixin class hierarchy
-# to control the interfaces to sensors, actuators, and controllers
-from abc import ABC, abstractmethod
-
-class named_base(ABC):
-    """every object in the system has to have a name
-    """
-    def __init__( self, name=None, **kwargs ):
-        if not name:
-            raise runtime_error( 'instance name unspecified' )
-        self.__name = name
-
-    @property
-    @abstractmethod
-    def name( self ):
-        return self.__name
-
-
-# bring modules into the package namespace
-from . import sensors
-from . import actuators
-from . import controllers
-from . import archivers
+__REGISTRY = {}
+def _register( clsname, cls ):
+    __REGISTRY[clsname] = cls
 
 # implement a factory for instantiating/configuring elements of the system
 def factory( name=None, classname=None, **kwargs ):
@@ -52,19 +29,46 @@ def factory( name=None, classname=None, **kwargs ):
         raise RuntimeError('missing object name')
     if not classname:
         raise RuntimeError('missing class name')
-    if classname not in registry.keys():
+    if classname not in __REGISTRY.keys():
         raise RuntimeError('unknown object type {}'.format( classname ) )
 
     # create and return the instance
-    inst = None
-    try:
-        logger.debug( 'creating object {} as {} with kwargs {}'.format( name, classname, kwargs ) )
-        klass = registry[classname]
-        inst = klass( name=name, **kwargs )
-    except Exception as e:
-        logger.error( '{}: {}'.format( e.__class__.__name__, str(e) ) )
-        logger.error( 'failed to instantiate {} as {}'.format( name, classname ) )
-        raise
-    return inst
+    cls = __REGISTRY[classname]
+    return cls( name=name, **kwargs )
 
+# define the root of an abstract mixin class hierarchy
+# to control the interfaces to sensors, actuators, and controllers
+class NamedBase:
+    """every object in the system has to have a name and may
+    have a parent
+    """
+    def __init__( self, name=None ):
+        if not name:
+            raise RuntimeError( 'instance name unspecified' )
+        self.__name = name
+        self.__parent = None
 
+    @property
+    def parent( self ):
+        """cls: return the parent class"""
+        return self.__parent
+
+    @parent.setter
+    def parent( self, p ):
+        self.__parent = p
+
+    @property
+    def name( self ):
+        """str: return the (possibly hierarchical) name"""
+        name = ''
+        if self.__parent is not None:
+            name += self.__parent.name + '.'
+        name += self.__name
+        return name
+
+#pylint: disable=wrong-import-position
+# bring modules into the package namespace
+from . import sensors
+from . import actuators
+from . import controllers
+from . import archivers
