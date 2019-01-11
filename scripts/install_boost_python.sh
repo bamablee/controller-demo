@@ -17,7 +17,7 @@ BOOST_TARBALL=${BOOST_DIRNAME}.tar.bz2
 BOOST_VERSION_DOTTED=$(echo $BOOST_VERSION | tr _ .)
 BOOST_TARBALL_URL=https://dl.bintray.com/boostorg/release/${BOOST_VERSION_DOTTED}/source/${BOOST_TARBALL}
 if [ ! -f /tmp/${BOOST_TARBALL} ]; then
-    wget -O /tmp/${BOOST_TARBALL} ${BOOST_TARBALL_URI}
+    wget -O /tmp/${BOOST_TARBALL} ${BOOST_TARBALL_URL}
 fi
 
 # build boost
