@@ -13,5 +13,8 @@ fi
 # make sure the latest code is installed
 ./scripts/setup.sh >/dev/null
 
+# run pylint on the codebase
+pylint tempcontrol
+
 # now run all the tests and generate an XUnit result file
 pytest -v --junit-xml=pytest.xml tests/
